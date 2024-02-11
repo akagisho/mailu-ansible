@@ -1,0 +1,15 @@
+---
+mailu:
+  domain: example.org
+  hostnames:
+    - mail.example.org
+  tls_flavor: letsencrypt
+  auth_ratelimit_ip: 5/hour
+  auth_ratelimit_user: 50/day
+  webmail: snappymail
+  api: false
+  antivirus: clamav
+  scan_macros: true
+  relayhost: 
+  fetchmail_enabled: true
+  tz: Etc/UTC

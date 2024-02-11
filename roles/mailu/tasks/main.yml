@@ -1,0 +1,39 @@
+---
+- name: create directory
+  file:
+    path: /mailu
+    state: directory
+
+- name: get secret_key
+  shell: >
+    test -f /mailu/mailu.env
+    && (grep -E "^SECRET_KEY=" /mailu/mailu.env | tail -1 | cut -d= -f2)
+    || (cat /dev/urandom | tr -dc '0-9A-Z' | head -c 16)
+  changed_when: False
+  register: result
+  when: mailu.secret_key is not defined
+
+- name: set variable
+  set_fact:
+    mailu:
+      secret_key: "{{ result.stdout }}"
+  when: mailu.secret_key is not defined
+
+- name: put config files
+  template:
+    src: "{{ item }}"
+    dest: "{{ item | regex_replace('^.*\\.\\./templates','') | regex_replace('\\.j2$','') }}"
+  with_fileglob:
+    - ../templates/mailu/*.j2
+  notify: restart mailu
+
+- name: put systemd config file
+  copy:
+    src: etc/systemd/system/mailu.service
+    dest: /etc/systemd/system/mailu.service
+  notify: daemon reload
+
+- name: enable mailu service
+  systemd:
+    name: mailu 
+    enabled: yes

@@ -1,0 +1,7 @@
+---
+- hosts: default
+  become: yes
+  roles:
+    #- ubuntu-common
+    #- docker
+    - mailu
