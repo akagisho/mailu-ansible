@@ -110,6 +110,7 @@ services:
     dns:
       - 192.168.203.254
 
+{% if mailu.scan_macros %}
   oletools:
     image: ${DOCKER_ORG:-ghcr.io/mailu}/${DOCKER_PREFIX:-}oletools:${MAILU_VERSION:-2.0}
     hostname: oletools
@@ -120,6 +121,7 @@ services:
       - resolver
     dns:
       - 192.168.203.254
+{% endif %}
 
   antispam:
     image: ${DOCKER_ORG:-ghcr.io/mailu}/${DOCKER_PREFIX:-}rspamd:${MAILU_VERSION:-2.0}
@@ -139,7 +141,9 @@ services:
     depends_on:
       - front
       - redis
+{% if mailu.scan_macros %}
       - oletools
+{% endif %}
 {% if mailu.antivirus %}
       - antivirus
 {% endif %}
