@@ -27,6 +27,12 @@
     - ../templates/mailu/*.j2
   notify: restart mailu
 
+- name: parse docker-compose.yml
+  shell: docker compose config
+  args:
+    chdir: /mailu
+  changed_when: False
+
 - name: put systemd config file
   copy:
     src: etc/systemd/system/mailu.service
